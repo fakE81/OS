@@ -1,1 +1,3 @@
 # OS
+
+Operacinės sistemos.
