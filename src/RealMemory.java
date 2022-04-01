@@ -1,6 +1,6 @@
-public class Memory {
+public class RealMemory {
     
-    Memory(){
+    RealMemory(){
         
     }
 }
