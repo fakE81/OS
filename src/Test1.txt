@@ -1,0 +1,6 @@
+$beg
+.dat
+.cod
+JM01
+HALT
+$vid

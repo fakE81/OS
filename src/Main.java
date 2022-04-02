@@ -1,4 +1,4 @@
-import java.util.Scanner;
+
 
 public class Main {
 
@@ -10,10 +10,10 @@ public class Main {
     
     public static void main(String[] args) {
         // Starting class.
-        System.out.println("Sukuriam HDD objekta skaitymui");
-        HDD fileReader = new HDD();
-        
-        System.out.println(fileReader.read(2, 2));
+        System.out.println("Sukuriam Realia masina");
+        RealMachine rm = new RealMachine();
+        rm.run();
+        //System.out.println(fileReader.read(2, 2));
         
         
         

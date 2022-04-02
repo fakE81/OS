@@ -4,21 +4,17 @@ import java.io.RandomAccessFile;
 
 public class HDD {
     // Hard drive.
-    // Skaitom is failo, kuriame yra komandos.
-    
-    // Uzsikrovima pasidaryt.
-    private static final int SECTORS = 1024; // Kiek baitu skaitysim trubut?
-    private static final String EMPTY_CELL_CHARACTER = " "; // Klausimas ar reikia mum
-    private static final int WORDS_PER_SECTOR = 16; // 16 x 16
+    private static final int DISK_SIZE = 4096; // Kiek baitu skaitysim trubut?
+    private static final String FILL_CHARACTER = " "; // Klausimas ar reikia mum
     private static RandomAccessFile file;
 
+    // Sukuriamas tuscias HDD. Size = 4096
     public HDD()
     {
         try
         {
             // If the file does not already exist then an attempt will be made to create it.
             file = new RandomAccessFile("HDD", "rw"); // rw - Open for reading and writing.
-
         }
         catch(FileNotFoundException e)
         {
@@ -26,31 +22,31 @@ public class HDD {
         }
 
         try {
-            for (int i = 0; i < SECTORS; ++i) {
-              file.seek(i * WORDS_PER_SECTOR * 2); // moves the pointer to the position specified with the bytePosition parameter.
-              file.writeChars(EMPTY_CELL_CHARACTER); // cia reikia tustiem langeliams kaip pavyzdziuose
+            for (int i = 0; i < DISK_SIZE/2; ++i) {
+              file.seek(i*2 ); // moves the pointer to the position specified with the bytePosition parameter.
+              file.writeChars(FILL_CHARACTER); // Uzpildom tusciai HDD.
             }
           } catch (IOException e) {
-            System.out.println("Error initializing HDD");
+              System.out.println("Error initializing HDD");
           }
         
     }
-    public static void write(char[] data, int sector) { // Rasom i pasirinkta sektoriu tam tikra data?
-        if (sector < 0 || sector > SECTORS) {
-          throw new IllegalArgumentException("Incorrect sector");
+    // Rasom nuo kazkokio tai offset'o.
+    public void write(char[] data, int off) { // Rasom i pasirinkta sektoriu tam tikra data?
+        if (off < 0 || off > DISK_SIZE) {
+          throw new IllegalArgumentException("Incorrect offset");
         }
         try {
-          file.seek(sector * WORDS_PER_SECTOR * 2);
+          file.seek(off);
           file.writeChars(new String(data)); // rasom
         } catch (IOException e) {
           System.out.println(" write error");
         }
       }
-    
-    
-      public static String read(int size, int offset) {
+
+      public String read(int size, int offset) {
         String dataRead = new String();
-        if (offset < 0 || offset > SECTORS) {
+        if (offset < 0 || offset > DISK_SIZE) {
           throw new IllegalArgumentException("Incorrect sector");
         }
         try {
