@@ -1,3 +1,4 @@
+package Memory;
 public class VirtualMemory {
     
     // Virtuali atmintis VM
