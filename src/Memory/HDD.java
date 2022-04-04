@@ -33,7 +33,7 @@ public class HDD {
         
     }
     // Rasom nuo kazkokio tai offset'o.
-    public void write(char[] data, int off) { // Rasom i pasirinkta sektoriu tam tikra data?
+    public static void write(char[] data, int off) { // Rasom i pasirinkta sektoriu tam tikra data?
         if (off < 0 || off > DISK_SIZE) {
           throw new IllegalArgumentException("Incorrect offset");
         }
@@ -44,8 +44,8 @@ public class HDD {
           System.out.println(" write error");
         }
       }
-
-      public String read(int size, int offset) {
+      // ProgramID - pasirenki kuria programa jei id = 1, bus uzkraunama prima programa, 2 - antra ir t.t., size svarbu kad didelis butu.
+      public static String read(int size, int offset,int programId) {
         String dataRead = new String();
         if (offset < 0 || offset > DISK_SIZE) {
           throw new IllegalArgumentException("Incorrect sector");
@@ -53,7 +53,17 @@ public class HDD {
         try {
           file.seek(offset);
           for (int i = 0; i < size; i++) {
-            dataRead += file.readChar();
+            char c = file.readChar();
+            // Tikrinam ar programa prasideda, jei taip, minusuojam ID;
+            if(c == '$'){
+              programId--;
+            }
+            // Jei id = 0, matom kad ta programa reikia uzsikrauti. ja ir uzsikraunam
+            if(programId == 0){
+              dataRead += c;
+            }else if(programId < 0){
+              return dataRead;
+            }
           }
           file.read();
         } catch (IOException e) {

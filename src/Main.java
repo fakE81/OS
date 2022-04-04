@@ -6,7 +6,7 @@ public class Main {
     // 2) Realios masinos registrus Static. Turi Memory
     // 3) VirtualMachine. Gauna Memory ir bando atpazinti komandas.
 
-
+    // TODO: Galima pradeti GUI daryti jau.
     
     public static void main(String[] args) {
         // Starting class.
