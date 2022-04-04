@@ -8,7 +8,7 @@ public class Word {
     Word(){
         data = "____";
     }
-    Word(String s){
+    public Word(String s){
         data = s;
     }
 
