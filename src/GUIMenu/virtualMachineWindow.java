@@ -62,7 +62,17 @@ public class virtualMachineWindow extends JFrame {
     };
     public virtualMachineWindow()
     {
-        table = new JTable(virtualData, virtualColumns);
+
+        String[][] virtualDataGeriauTaip = new String[16][16];
+        int maxC = 16;
+        int maxL = 16;
+        for(int i =0;i < maxC; i++){
+            for(int j =0; j < maxL; j++){
+                virtualDataGeriauTaip[i][j]= " ";
+            }
+        }
+
+        table = new JTable(virtualDataGeriauTaip, virtualColumns);
         
         scPaneTable = new JScrollPane(table);
     }

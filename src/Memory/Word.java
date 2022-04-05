@@ -15,6 +15,9 @@ public class Word {
     public String getValue(){
         return data;
     }
+    public char[] getCharValue(){
+        return data.toCharArray();
+    }
     public void setValue(String s){
         data = s;
     }

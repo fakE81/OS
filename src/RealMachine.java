@@ -24,6 +24,15 @@ public class RealMachine {
     private RealMemory memory;
 
     RealMachine(){
+        PTR = 0;
+        R0 = 0;
+        R1 = 0;
+        PC = 0;
+        SI = 0;
+        PI = 0;
+        TI = 0;
+        mode = 0;
+
         this.hdd = new HDD();
         this.memory = new RealMemory();
     }
@@ -38,7 +47,7 @@ public class RealMachine {
             vm.run();
             
             System.out.println("Realios masinos atmintis:");
-            memory.display();
+            //memory.display();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -59,5 +68,21 @@ public class RealMachine {
             }
     }
 
-    
+    public static void Interrupt(){
+        if(SI == 1){
+            System.out.println(PC+")Output stream: " + String.valueOf(R0));
+        }
+        else if(SI == 9){
+            // Read input.
+        }
+
+        SI = 0;
+    }
+
+
+    // Getters/Setters
+
+    public static void HALT(){
+        System.out.println(PC+")HALT!");
+    }
 }

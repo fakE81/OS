@@ -48,6 +48,9 @@ public class VirtualMemory {
     public Word getWord(int x1, int x2){
         return memory[x1][x2];
     }
+    public Word getWord(byte pc){
+        return memory[pc/16+2][pc%16];
+    }
     public void setWord(String word,int x1, int x2){
         memory[x1][x2] = new Word(word);
     }
