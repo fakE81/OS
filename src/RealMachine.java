@@ -61,7 +61,6 @@ public class RealMachine {
                 String programCode= ""; // Tuscia.
                 while((r = reader.read()) != -1){
                     // Panaikinam newLine, tarpus.
-                    if(r > 33 && r < 150)
                         programCode += (char) r;
                 }
                 HDD.write(programCode.toCharArray(), 0);

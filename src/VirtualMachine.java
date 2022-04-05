@@ -41,6 +41,7 @@ public class VirtualMachine {
 
         // Code segmento pradzia. 2 Blokas.
         while(true){
+                System.out.println(RealMachine.PC);
                 Word command = virtualMemory.getWord(RealMachine.PC);
                 RealMachine.PC++;
                 // Tikrinimas:
@@ -254,14 +255,14 @@ public class VirtualMachine {
         String code = HDD.read(300, 0, 1);
         System.out.println(code);
         // Split commands:
-
+        String[] snipets = code.split("\\r?\\n"); 
         // Kodo gabaliukai isskaidomi po 4 baitus.
-        List<String> snipets= new ArrayList<String>();
-        int index = 0;
-        while (index<code.length()) {
-            snipets.add(code.substring(index, Math.min(index+4,code.length())));
-            index=index+4;
-        }
+        // List<String> snipets= new ArrayList<String>();
+        // int index = 0;
+        // while (index<code.length()) {
+        //     snipets.add(code.substring(index, Math.min(index+4,code.length())));
+        //     index=index+4;
+        // }
 
         // Iteruojam  per komandas.
         for(String snipet : snipets){
@@ -286,7 +287,15 @@ public class VirtualMachine {
             // Kvieciam rasyma.
             if(writeStatus.equals("DATA")){
                 // TODO: Kitaip sugalvot. Dabar tik bendram atvejui.
-                virtualMemory.WriteDataSegment(new Word(snipet));
+                List<String> tempSnipets= new ArrayList<String>();
+                int index = 0;
+                while (index<snipet.length()) {
+                    tempSnipets.add(snipet.substring(index, Math.min(index+4,snipet.length())));
+                     index=index+4;
+                 }
+                for(String temp : tempSnipets){
+                    virtualMemory.WriteDataSegment(new Word(temp));
+                }
             }
             else if(writeStatus.equals("CODE")){
                 virtualMemory.WriteCodeSegement(new Word(snipet));
