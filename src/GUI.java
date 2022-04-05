@@ -10,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
+import GUIMenu.userMemoryWindow;
 import GUIMenu.virtualMachineWindow;
 
 import java.awt.*;
@@ -17,28 +18,35 @@ import java.awt.event.*;
 public class GUI implements ActionListener {
     
     private JFrame frame;
-    private JButton button;  
-    private JPanel panel;
-    private JLabel label;
-    virtualMachineWindow v = new virtualMachineWindow();
     
+    private JPanel panel;
+    private JLabel virtualMemoryLabel;
+    private JLabel userMemoryLabel;
+    virtualMachineWindow v = new virtualMachineWindow();
+    virtualMachineWindow virtualMemory = new virtualMachineWindow();
+
+    userMemoryWindow userMemory = new userMemoryWindow();
     
     public GUI()
     {
         frame = new JFrame();
         frame.setSize(1400, 800);
-        button = new JButton("Virtual Machine");
-        button.setBounds(5, 5, 5, 5);
-        button.addActionListener(this);
+        frame.setSize(600, 800);
+        frame.setVisible(true);
         panel = new JPanel();
-
+        virtualMemoryLabel = new JLabel("Virtual Memory");
+        userMemoryLabel = new JLabel("User Memory");
+        panel.add(virtualMemoryLabel);
+        panel.add(userMemoryLabel);
+        Dimension size = virtualMemoryLabel.getPreferredSize();
+        Dimension size1 = userMemoryLabel.getPreferredSize();
+        virtualMemoryLabel.setBounds(15, 290, size.width, size.height);
+        userMemoryLabel.setBounds(15, 610, size1.width, size1.height);
         panel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10)); // Pixels top/bottom/left/right
-        
-        panel.add(v.scPaneTable); // lentele VM
-        //panel.add(button);
-        //panel.add(scPaneTable);
-
-        frame.add(panel, BorderLayout.CENTER);
+        panel.setLayout( new BorderLayout() );
+        panel.add(virtualMemory.scPaneTable, BorderLayout.PAGE_END); // Border layoutas vietai nusakyti
+        panel.add(userMemory.scPaneTable, BorderLayout.PAGE_START); // lentele VM
+        frame.add(panel, BorderLayout.BEFORE_LINE_BEGINS);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setTitle("OS");
         frame.setVisible(true);
@@ -53,7 +61,7 @@ public class GUI implements ActionListener {
     }
     @Override
     public void actionPerformed(ActionEvent e) {
-        panel.add(v.scPaneTable);
+        
         
     }
 
