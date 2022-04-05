@@ -71,8 +71,18 @@ public class RealMachine {
         if(SI == 1){
             System.out.println(PC+")Output stream: " + String.valueOf(R0));
         }
+        else if(SI == 2){
+
+        }
         else if(SI == 9){
             // Read input.
+        }
+
+        if(PI == 0){
+            // Neteisingas adresas.
+        }
+        else if(PI == 2){
+            // Neteisingas operacijos kodas.
         }
 
         SI = 0;

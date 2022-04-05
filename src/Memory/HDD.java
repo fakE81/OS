@@ -33,6 +33,7 @@ public class HDD {
         
     }
     // Rasom nuo kazkokio tai offset'o.
+    // TODO: Butu gerai susiformatuoti taip, '#' irasytu i atskira bloka.
     public static void write(char[] data, int off) { // Rasom i pasirinkta sektoriu tam tikra data?
         if (off < 0 || off > DISK_SIZE) {
           throw new IllegalArgumentException("Incorrect offset");

@@ -6,7 +6,7 @@ public class Word {
 
 
     Word(){
-        data = "____";
+        data = "    ";
     }
     public Word(String s){
         data = s;

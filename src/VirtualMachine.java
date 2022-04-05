@@ -41,7 +41,6 @@ public class VirtualMachine {
 
         // Code segmento pradzia. 2 Blokas.
         while(true){
-                System.out.println(RealMachine.PC);
                 Word command = virtualMemory.getWord(RealMachine.PC);
                 RealMachine.PC++;
                 // Tikrinimas:
@@ -84,9 +83,9 @@ public class VirtualMachine {
 
         // TODO: L0xx, R0 registrui, L1xx - R1 registrui. Load register1
         else if(command.substring(0,2).equals("LD")){
-            int x1 = Integer.parseInt(command.substring(2, 3));
-            int x2 = Integer.parseInt(command.substring(3, 4));
-            System.out.println(RealMachine.PC+")LD: Loading value from address  " +x1*16 + ":" +x2);
+            int x1 = Integer.parseInt(command.substring(2, 3),16);
+            int x2 = Integer.parseInt(command.substring(3, 4),16);
+            System.out.println(RealMachine.PC+")LD: Loading value from address  " +x1 + ":" +x2);
 
             char[] word = new char[4];
 
@@ -154,9 +153,22 @@ public class VirtualMachine {
         else if(command.substring(0,4).equals("PDRS")){
             // ADD();
         }
-        // TODO: Sita nereikalinga turbut.
+        // TODO: Reiktu daryt per interupta, bet dabar paprastai is atminties bus:)
         else if(command.substring(0,2).equals("PR")){
-            // ADD();
+            //RealMachine.SI = (byte)2;
+            int blockNumber = Integer.parseInt(command.substring(2, 3),16);
+            int wordNumber = Integer.parseInt(command.substring(3, 4),16);
+            String text = virtualMemory.getWord(blockNumber, wordNumber).getValue();
+            while(text.charAt(text.length()-1)!='#'){
+                System.out.print(text);
+                wordNumber++;
+                text = virtualMemory.getWord(blockNumber, wordNumber).getValue();
+                if(wordNumber==15){
+                    wordNumber = 0;
+                    blockNumber++;
+                }
+            }
+            System.out.println();
         }
         else if(command.substring(0,2).equals("RE")){
             RealMachine.SI = (byte)9;
@@ -256,14 +268,6 @@ public class VirtualMachine {
         System.out.println(code);
         // Split commands:
         String[] snipets = code.split("\\r?\\n"); 
-        // Kodo gabaliukai isskaidomi po 4 baitus.
-        // List<String> snipets= new ArrayList<String>();
-        // int index = 0;
-        // while (index<code.length()) {
-        //     snipets.add(code.substring(index, Math.min(index+4,code.length())));
-        //     index=index+4;
-        // }
-
         // Iteruojam  per komandas.
         for(String snipet : snipets){
             // Tikrinam ir surasom viska i memory.
@@ -291,10 +295,17 @@ public class VirtualMachine {
                 int index = 0;
                 while (index<snipet.length()) {
                     tempSnipets.add(snipet.substring(index, Math.min(index+4,snipet.length())));
-                     index=index+4;
+                    index=index+4;
                  }
                 for(String temp : tempSnipets){
-                    virtualMemory.WriteDataSegment(new Word(temp));
+                    if(temp.length() != 1 && temp.charAt(temp.length()-1)=='#'){
+                        virtualMemory.WriteDataSegment(new Word(temp.substring(0, temp.length()-1)));
+                        virtualMemory.WriteDataSegment(new Word("#"));
+                    }
+                    else{
+                        virtualMemory.WriteDataSegment(new Word(temp));
+                    }
+                    
                 }
             }
             else if(writeStatus.equals("CODE")){

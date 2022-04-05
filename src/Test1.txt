@@ -1,10 +1,13 @@
 $BEG
 DATA
-Iveskite 1 skaiciu: #
-Iveskite 2 skaiciu: #
-0001
-0002
+Iveskite 1 skaiciu:  #
+Iveskite 2 skaiciu:  #
+1
+5
 CODE
+PDR0
+PR00
+PR06
 MOVE
 HALT
 
