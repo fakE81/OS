@@ -21,58 +21,26 @@ public class virtualMachineWindow extends JFrame {
     
     public JTable table;
     public JScrollPane scPaneTable;
-    String virtualColumns[] =
-    {
-        "0",
-        "1",
-        "2",
-        "3",
-        "4",
-        "5",
-        "6",
-        "7",
-        "8",
-        "9",
-        "A",
-        "B",
-        "C",
-        "D",
-        "E",
-        "F",
-    };
-    String[][] virtualData =
-    {
-        {" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", },
-        {" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", },
-        {" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", },
-        {" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", },
-        {" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", },
-        {" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", },
-        {" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", },
-        {" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", },
-        {" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", },
-        {" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", },
-        {" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", },
-        {" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", },
-        {" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", },
-        {" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", },
-        {" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", },
-        {" ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", },
-
-    };
+    String[][] virtualData = new String[16][16];
+    String [] virtualColumns = new String[16];
+    
     public virtualMachineWindow()
     {
 
-        String[][] virtualDataGeriauTaip = new String[16][16];
+        
         int maxC = 16;
         int maxL = 16;
+        for(int i = 0; i < maxC; i++)
+        {
+            virtualColumns[i] = Integer.toHexString(i);
+        }
         for(int i =0;i < maxC; i++){
             for(int j =0; j < maxL; j++){
-                virtualDataGeriauTaip[i][j]= " ";
+                virtualData[i][j]= " ";
             }
         }
 
-        table = new JTable(virtualDataGeriauTaip, virtualColumns);
+        table = new JTable(virtualData, virtualColumns);
         
         scPaneTable = new JScrollPane(table);
     }
