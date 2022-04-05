@@ -1,13 +1,13 @@
 $BEG
 DATA
-Iveskite 1 skaiciu:  #
-Iveskite 2 skaiciu:  #
+Iveskite 1 skaiciuuuuuuus12345611#
+Iveskite 2 skaiciu:blablalbla#
 1
 5
 CODE
 PDR0
 PR00
-PR06
+PR0A
 MOVE
 HALT
 
