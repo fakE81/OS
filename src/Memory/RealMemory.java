@@ -1,13 +1,17 @@
 package Memory;
+
+import java.util.ArrayList;
+
 public class RealMemory {
     
     // Block count = 16
     // Word klase, kuri yra cia isreiksta. [Block_Count][Block_Size]
     // Rasyti i bloka Char[], gauti is bloko.
 
-    private static int BLOCK_COUNT = 16;
+    public static int BLOCK_COUNT = 32;
     private static int BLOCK_SIZE = 16;
-
+    
+    public ArrayList<Integer> usedBlocks = new ArrayList<Integer>();
 
     // Nezinau kas geriau ar turet dvimati masyva su Word, ar turet atskira klase Block. Kuri tures 16 zodziu?
     private Word[][] memory = new Word[BLOCK_COUNT][BLOCK_SIZE];

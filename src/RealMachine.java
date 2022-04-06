@@ -20,6 +20,8 @@ public class RealMachine {
 
     public static byte[] sf = {0,0,0,0}; // 0-CF,1-ZF,2-SF,3-OF 
 
+
+    private Paging paging;
     private HDD hdd;
     private RealMemory memory;
 
@@ -35,6 +37,7 @@ public class RealMachine {
 
         this.hdd = new HDD();
         this.memory = new RealMemory();
+        this.paging = new Paging();
     }
 
 
@@ -42,12 +45,17 @@ public class RealMachine {
         try {
             // Viskas vyksta cia.
             LoadProgram("Test1.txt"); // Uzsikraunam programa i HDD.
-            VirtualMachine vm = new VirtualMachine(); // Virtuali masina uzkraunama
+            PTR = paging.getFreeBlock(memory);
+            paging.createPageTable(PTR, memory);
+            VirtualMachine vm = new VirtualMachine(PTR); // Fill memory padarom.
+            vm.syncMemory(memory);
             //TODO: Puslapiavimas.
-            vm.run();
+
+            // Cia While(SI !=9):
+                vm.run();
             
             System.out.println("Realios masinos atmintis:");
-            //memory.display();
+            memory.display();
         } catch (IOException e) {
             e.printStackTrace();
         }

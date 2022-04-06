@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 import Memory.HDD;
+import Memory.RealMemory;
 import Memory.VirtualMemory;
 import Memory.Word;
 
@@ -23,16 +24,19 @@ public class VirtualMachine {
     private String writeStatus = "START";
     private VirtualMemory virtualMemory;
 
+    private int PTR;
+
     // Registrai esantys VM yra susynchronized su RM registrais
-    VirtualMachine(){
+    VirtualMachine(int PTR){
         this.virtualMemory = new VirtualMemory();
+        this.PTR = PTR;
+        UploadToMemory();
     }
 
 
 
     public void run(){
         //processCommand();
-        UploadToMemory();
         processProgram();
     }
 
@@ -259,6 +263,18 @@ public class VirtualMachine {
     private boolean test(){
         // TODO: TI pridet veliau
         return (RealMachine.PI + RealMachine.SI > 0);
+    }
+
+
+    public void syncMemory(RealMemory rm){
+        int syncBlocks = 0;
+        for(int i =0; syncBlocks < VirtualMemory.BLOCK_COUNT;i++){
+            int blockId = Integer.valueOf(rm.getWord(PTR, i).getValue());
+            for(int j = 0; j < virtualMemory.BLOCK_COUNT; j++){
+                rm.setWord(virtualMemory.getWord(i, j).getValue(), blockId, j);
+            }
+            syncBlocks++;
+        }
     }
 
     // Is HDD ikelimas i VM atminti, bet LAIKINAS.
