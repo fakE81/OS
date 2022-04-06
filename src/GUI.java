@@ -76,8 +76,8 @@ public class GUI implements ActionListener {
         // Nustatom ju vietas
         Dimension size = virtualMemoryLabel.getPreferredSize();
         Dimension size1 = userMemoryLabel.getPreferredSize();
-        virtualMemoryLabel.setBounds(15, 290, size.width, size.height);
-        userMemoryLabel.setBounds(15, 610, size1.width, size1.height);
+        virtualMemoryLabel.setBounds(15, 610, size.width, size.height);
+        userMemoryLabel.setBounds(15, 290, size1.width, size1.height);
         // Pridedam juos
         panel.add(virtualMemoryLabel);
         panel.add(userMemoryLabel);
