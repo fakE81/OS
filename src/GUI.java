@@ -1,6 +1,7 @@
 
 import Memory.HDD;
 import Memory.RealMemory;
+import Memory.VirtualMemory;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -31,8 +32,8 @@ public class GUI{
     private JButton submitButton;
     private JButton stepButton;
     virtualMachineWindow v = new virtualMachineWindow();
-    virtualMachineWindow virtualMemory = new virtualMachineWindow();
-    userMemoryWindow userMemory = new userMemoryWindow();
+    static virtualMachineWindow virtualMemory = new virtualMachineWindow();
+    static userMemoryWindow userMemory = new userMemoryWindow();
 
     // VARIABLES FOR REGISTERS
     private JLabel ptr;
@@ -53,21 +54,21 @@ public class GUI{
 
     private JLabel testLabel; // Jei sita istrinam paskutinio labelio niekad nerodo nzn kas per bugas:DDDD
     // TextFields for Registers
-    private JFormattedTextField ptrField;
-    private JFormattedTextField r0Field;
-    private JFormattedTextField r1Field;
+    private static JFormattedTextField ptrField;
+    private static JFormattedTextField r0Field;
+    private static JFormattedTextField r1Field;
 
-    private JFormattedTextField pcField;
-    private JFormattedTextField siField;
-    private JFormattedTextField piField;
+    private static JFormattedTextField pcField;
+    private static JFormattedTextField siField;
+    private static JFormattedTextField piField;
     
-    private JFormattedTextField tiField;
-    private JFormattedTextField modeField;
-    private JFormattedTextField sfField;
+    private static JFormattedTextField tiField;
+    private static JFormattedTextField modeField;
+    private static JFormattedTextField sfField;
     
-    private JFormattedTextField cfField;
-    private JFormattedTextField zfField;
-    private JFormattedTextField ofField;
+    private static JFormattedTextField cfField;
+    private static JFormattedTextField zfField;
+    private static JFormattedTextField ofField;
     // TextArea for our output
     private JTextArea tArea;
 
@@ -179,10 +180,11 @@ public class GUI{
         stepButton.setBounds(150, 720, 90, 20);
         panel.add(stepButton);
 
-        submitButton = new JButton( new AbstractAction("Uzkrauti") { 
+        submitButton = new JButton( new AbstractAction("Start") { 
             @Override
             public void actionPerformed( ActionEvent e ) {
-                JOptionPane.showMessageDialog(frame, "Kolkas nesugalvojom ka mygtukas daro, bet veikia uzkrovimo mygtukas!");
+                start();
+                //JOptionPane.showMessageDialog(frame, "Kolkas nesugalvojom ka mygtukas daro, bet veikia uzkrovimo mygtukas!");
             }
         });
         submitButton.setBounds(30, 720, 90, 20);
@@ -248,13 +250,44 @@ public class GUI{
         frame.setTitle("OS");
         frame.setVisible(true);
     }
+
+    public void start(){
+        rm.run();
+    }
+    public void startWithSteps(){
+
+    }
+
+    public static void updateRegisters(int ptr,int r0, int r1, byte pc, byte si, byte pi,byte ti,byte mode){
+        ptrField.setValue(ptr);
+        r0Field.setValue(r0);
+        r1Field.setValue(r1);
+        pcField.setValue(pc);
+        siField.setValue(si);
+        piField.setValue(pi);
+        tiField.setValue(ti);
+        modeField.setValue(mode);
+    }
+    public static void updateStatusFlags(byte[] status){
+        cfField.setValue(status[0]);
+        zfField.setValue(status[1]);
+        sfField.setValue(status[2]);
+        ofField.setValue(status[3]);
+    }
+
+    public static void updateVirtualMemory(VirtualMemory vm){
+        virtualMemory.update(vm);
+    }
+    public static void updateRealMemory(RealMemory rm){
+        userMemory.update(rm);
+    }
+
+
     public static void main(String[] args) {
         // Starting class.
         
         new GUI();
         System.out.println("Sukuriam Realia masina");
-        //RealMachine rm = new RealMachine();
-        rm.run();
     }
 
 }

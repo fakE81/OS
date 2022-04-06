@@ -21,6 +21,7 @@ public class VirtualMachine {
     }
     public void run(){
         processProgram();
+        GUI.updateVirtualMemory(virtualMemory);
     }
 
     // Komandu tvarkymo metodas.

@@ -13,6 +13,9 @@ import javax.swing.ListModel;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
+
+import Memory.VirtualMemory;
+
 import java.awt.event.WindowAdapter;
 
 import java.awt.event.*;
@@ -43,5 +46,14 @@ public class virtualMachineWindow extends JFrame {
         table = new JTable(virtualData, virtualColumns);
         
         scPaneTable = new JScrollPane(table);
+    }
+
+
+    public void update(VirtualMemory vm){
+        for(int i =0;i < vm.BLOCK_COUNT; i++){
+            for(int j =0; j < vm.BLOCK_SIZE; j++){
+                virtualData[i][j]= vm.getWord(i, j).getValue();
+            }
+        }
     }
 }

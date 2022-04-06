@@ -53,6 +53,9 @@ public class RealMachine {
             // Pagrindinis ciklas:
             while(run){
                 vm.run();
+                GUI.updateRegisters(PTR, R0, R1, PC, SI, PI, TI, mode);
+                GUI.updateStatusFlags(sf);
+                GUI.updateRealMemory(memory);
             }
             memory.display();
         } catch (IOException e) {
