@@ -2,6 +2,7 @@
 import Memory.HDD;
 import Memory.RealMemory;
 
+import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFormattedTextField;
@@ -20,7 +21,7 @@ import GUIMenu.virtualMachineWindow;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.NumberFormat;  
-public class GUI implements ActionListener {
+public class GUI{
     
     private JFrame frame;
     public static RealMachine rm = new RealMachine();
@@ -28,6 +29,7 @@ public class GUI implements ActionListener {
     private JLabel virtualMemoryLabel;
     private JLabel userMemoryLabel;
     private JButton submitButton;
+    private JButton stepButton;
     virtualMachineWindow v = new virtualMachineWindow();
     virtualMachineWindow virtualMemory = new virtualMachineWindow();
     userMemoryWindow userMemory = new userMemoryWindow();
@@ -45,6 +47,10 @@ public class GUI implements ActionListener {
     private JLabel mode;
     private JLabel sf;
 
+    private JLabel cf;
+    private JLabel zf;
+    private JLabel of;
+
     private JLabel testLabel; // Jei sita istrinam paskutinio labelio niekad nerodo nzn kas per bugas:DDDD
     // TextFields for Registers
     private JFormattedTextField ptrField;
@@ -58,6 +64,10 @@ public class GUI implements ActionListener {
     private JFormattedTextField tiField;
     private JFormattedTextField modeField;
     private JFormattedTextField sfField;
+    
+    private JFormattedTextField cfField;
+    private JFormattedTextField zfField;
+    private JFormattedTextField ofField;
     // TextArea for our output
     private JTextArea tArea;
 
@@ -84,55 +94,73 @@ public class GUI implements ActionListener {
         
         // Registru textFieldai
         ptrField = new JFormattedTextField("");
-        ptrField.setBounds(45,630,30,20);
+        ptrField.setBounds(45,630,50,20);
         ptrField.setValue(new RealMachine().PTR);
         ptrField.setEditable(false);
         panel.add(ptrField);
 
         r0Field = new JFormattedTextField("");
-        r0Field.setBounds(45,650,30,20);
+        r0Field.setBounds(45,650,50,20);
         r0Field.setValue(new RealMachine().R0);
         r0Field.setEditable(false);
         panel.add(r0Field);
 
         r1Field = new JFormattedTextField("");
-        r1Field.setBounds(45,670,30,20);
+        r1Field.setBounds(45,670,50,20);
         r1Field.setValue(new RealMachine().R1);
         r1Field.setEditable(false);
         panel.add(r1Field);
 
         tiField = new JFormattedTextField("");
-        tiField.setBounds(115,630,30,20);
+        tiField.setBounds(135,630,50,20);
         tiField.setValue(new RealMachine().TI);
         tiField.setEditable(false);
         panel.add(tiField);
 
         modeField = new JFormattedTextField("");
-        modeField.setBounds(115,650,30,20);
+        modeField.setBounds(135,650,50,20);
         modeField.setValue(new RealMachine().mode);
         modeField.setEditable(false);
         panel.add(modeField);
 
         sfField = new JFormattedTextField("");
-        sfField.setBounds(115,670,30,20);
+        sfField.setBounds(290,630,30,20);
         sfField.setValue(new RealMachine().sf);
         sfField.setEditable(false);
         panel.add(sfField);
 
+        cfField = new JFormattedTextField("");
+        cfField.setBounds(290,650,30,20);
+        cfField.setValue(new RealMachine().sf);
+        cfField.setEditable(false);
+        panel.add(cfField);
+
+        zfField = new JFormattedTextField("");
+        zfField.setBounds(290,670,30,20);
+        zfField.setValue(new RealMachine().sf);
+        zfField.setEditable(false);
+        panel.add(zfField);
+
+        ofField = new JFormattedTextField("");
+        ofField.setBounds(290,690,30,20);
+        ofField.setValue(new RealMachine().sf);
+        ofField.setEditable(false);
+        panel.add(ofField);
+
         pcField = new JFormattedTextField("");
-        pcField.setBounds(170,630,30,20);
+        pcField.setBounds(220,630,40,20);
         pcField.setValue(new RealMachine().PC);
         pcField.setEditable(false);
         panel.add(pcField);
 
         siField = new JFormattedTextField("");
-        siField.setBounds(170,650,30,20);
+        siField.setBounds(220,650,40,20);
         siField.setValue(new RealMachine().SI);
         siField.setEditable(false);
         panel.add(siField);
 
         piField = new JFormattedTextField("");
-        piField.setBounds(170,670,30,20);
+        piField.setBounds(135,670,50,20);
         piField.setValue(new RealMachine().PI);
         piField.setEditable(false);
         panel.add(piField);
@@ -140,10 +168,23 @@ public class GUI implements ActionListener {
         tArea = new JTextArea(10, 10);
         panel.add(tArea);
         tArea.append("Musu outputas keliaus \n cia su tArea.append \n funkcija");
-        tArea.setBounds(315,615,130,130);
+        tArea.setBounds(330,615,130,130);
         // Mygtukas kazkam
-        submitButton = new JButton("Uzkrauti");
-        submitButton.addActionListener(this);
+        stepButton = new JButton( new AbstractAction("Step") {
+            @Override
+            public void actionPerformed( ActionEvent e ) {
+                JOptionPane.showMessageDialog(frame, "Step mygtukas veikia");
+            }
+        });
+        stepButton.setBounds(150, 720, 90, 20);
+        panel.add(stepButton);
+
+        submitButton = new JButton( new AbstractAction("Uzkrauti") { 
+            @Override
+            public void actionPerformed( ActionEvent e ) {
+                JOptionPane.showMessageDialog(frame, "Kolkas nesugalvojom ka mygtukas daro, bet veikia uzkrovimo mygtukas!");
+            }
+        });
         submitButton.setBounds(30, 720, 90, 20);
         panel.add(submitButton);
         // Darom registru labeli ir ji pridedam
@@ -161,27 +202,39 @@ public class GUI implements ActionListener {
 
         ti = new JLabel("TI");
         panel.add(ti);
-        ti.setBounds(80,630,size.width, size.height);
+        ti.setBounds(100,630,size.width, size.height);
 
         mode = new JLabel("MODE");
         panel.add(mode);
-        mode.setBounds(80,650,size.width, size.height);
+        mode.setBounds(100,650,size.width, size.height);
 
         sf = new JLabel("SF");
         panel.add(sf);
-        sf.setBounds(80,670,size.width, size.height);
+        sf.setBounds(270,630,size.width, size.height);
+
+        cf = new JLabel("CF");
+        panel.add(cf);
+        cf.setBounds(270,650,size.width, size.height);
+
+        zf = new JLabel("ZF");
+        panel.add(zf);
+        zf.setBounds(270,670,size.width, size.height);
+
+        of = new JLabel("OF");
+        panel.add(of);
+        of.setBounds(270,690,size.width, size.height);
 
         pc = new JLabel("PC");
         panel.add(pc);
-        pc.setBounds(150,630,size.width, size.height);
+        pc.setBounds(200,630,size.width, size.height);
 
         si = new JLabel("SI");
         panel.add(si);
-        si.setBounds(150,650,size.width, size.height);
+        si.setBounds(200,650,size.width, size.height);
 
         pi = new JLabel("PI");
         panel.add(pi);
-        pi.setBounds(150,670,size.width, size.height);
+        pi.setBounds(100,670,size.width, size.height);
 
         testLabel = new JLabel("T");
         panel.add(testLabel);
@@ -202,11 +255,6 @@ public class GUI implements ActionListener {
         System.out.println("Sukuriam Realia masina");
         //RealMachine rm = new RealMachine();
         rm.run();
-    }
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        
-        JOptionPane.showMessageDialog(frame, "Kolkas nesugalvojom ka mygtukas daro, bet veikia!");
     }
 
 }
