@@ -25,6 +25,7 @@ public class RealMachine {
     private HDD hdd;
     private RealMemory memory;
 
+    private static boolean run = true;
     RealMachine(){
         PTR = 0;
         R0 = 0;
@@ -32,7 +33,7 @@ public class RealMachine {
         PC = 0;
         SI = 0;
         PI = 0;
-        TI = 0;
+        TI = 100;
         mode = 0;
 
         this.hdd = new HDD();
@@ -49,12 +50,10 @@ public class RealMachine {
             paging.createPageTable(PTR, memory);
             VirtualMachine vm = new VirtualMachine(PTR); // Fill memory padarom.
             vm.syncMemory(memory);
-            //TODO: Puslapiavimas.
-
-            // Cia While(SI !=9):
+            // Pagrindinis ciklas:
+            while(run){
                 vm.run();
-            
-            System.out.println("Realios masinos atmintis:");
+            }
             memory.display();
         } catch (IOException e) {
             e.printStackTrace();
@@ -82,8 +81,9 @@ public class RealMachine {
         else if(SI == 2){
 
         }
-        else if(SI == 9){
-            // Read input.
+        else if(SI == 8){
+            run = false;
+            System.out.println("HALT!");
         }
 
         if(PI == 0){
@@ -93,6 +93,9 @@ public class RealMachine {
             // Neteisingas operacijos kodas.
         }
 
+        if(TI == 0){
+            TI = 100;
+        }
         SI = 0;
     }
 
