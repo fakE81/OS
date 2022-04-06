@@ -12,7 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
+
 
 import GUIMenu.userMemoryWindow;
 import GUIMenu.virtualMachineWindow;
@@ -23,6 +23,7 @@ import java.text.NumberFormat;
 public class GUI implements ActionListener {
     
     private JFrame frame;
+    public static RealMachine rm = new RealMachine();
     private JPanel panel;
     private JLabel virtualMemoryLabel;
     private JLabel userMemoryLabel;
@@ -46,17 +47,17 @@ public class GUI implements ActionListener {
 
     private JLabel testLabel; // Jei sita istrinam paskutinio labelio niekad nerodo nzn kas per bugas:DDDD
     // TextFields for Registers
-    private JTextField ptrField;
-    private JTextField r0Field;
-    private JTextField r1Field;
+    private JFormattedTextField ptrField;
+    private JFormattedTextField r0Field;
+    private JFormattedTextField r1Field;
 
-    private JTextField pcField;
-    private JTextField siField;
-    private JTextField piField;
+    private JFormattedTextField pcField;
+    private JFormattedTextField siField;
+    private JFormattedTextField piField;
     
-    private JTextField tiField;
-    private JTextField modeField;
-    private JTextField sfField;
+    private JFormattedTextField tiField;
+    private JFormattedTextField modeField;
+    private JFormattedTextField sfField;
     // TextArea for our output
     private JTextArea tArea;
 
@@ -84,38 +85,56 @@ public class GUI implements ActionListener {
         // Registru textFieldai
         ptrField = new JFormattedTextField("");
         ptrField.setBounds(45,630,30,20);
+        ptrField.setValue(new RealMachine().PTR);
+        ptrField.setEditable(false);
         panel.add(ptrField);
 
-        r0Field = new JTextField("");
+        r0Field = new JFormattedTextField("");
         r0Field.setBounds(45,650,30,20);
+        r0Field.setValue(new RealMachine().R0);
+        r0Field.setEditable(false);
         panel.add(r0Field);
 
-        r1Field = new JTextField("");
+        r1Field = new JFormattedTextField("");
         r1Field.setBounds(45,670,30,20);
+        r1Field.setValue(new RealMachine().R1);
+        r1Field.setEditable(false);
         panel.add(r1Field);
 
-        tiField = new JTextField("");
+        tiField = new JFormattedTextField("");
         tiField.setBounds(115,630,30,20);
+        tiField.setValue(new RealMachine().TI);
+        tiField.setEditable(false);
         panel.add(tiField);
 
-        modeField = new JTextField("");
+        modeField = new JFormattedTextField("");
         modeField.setBounds(115,650,30,20);
+        modeField.setValue(new RealMachine().mode);
+        modeField.setEditable(false);
         panel.add(modeField);
 
-        sfField = new JTextField("");
+        sfField = new JFormattedTextField("");
         sfField.setBounds(115,670,30,20);
+        sfField.setValue(new RealMachine().sf);
+        sfField.setEditable(false);
         panel.add(sfField);
 
-        pcField = new JTextField("");
+        pcField = new JFormattedTextField("");
         pcField.setBounds(170,630,30,20);
+        pcField.setValue(new RealMachine().PC);
+        pcField.setEditable(false);
         panel.add(pcField);
 
-        siField = new JTextField("");
+        siField = new JFormattedTextField("");
         siField.setBounds(170,650,30,20);
+        siField.setValue(new RealMachine().SI);
+        siField.setEditable(false);
         panel.add(siField);
 
-        piField = new JTextField("");
+        piField = new JFormattedTextField("");
         piField.setBounds(170,670,30,20);
+        piField.setValue(new RealMachine().PI);
+        piField.setEditable(false);
         panel.add(piField);
         // TextArea musu outputui
         tArea = new JTextArea(10, 10);
@@ -181,7 +200,7 @@ public class GUI implements ActionListener {
         
         new GUI();
         System.out.println("Sukuriam Realia masina");
-        RealMachine rm = new RealMachine();
+        //RealMachine rm = new RealMachine();
         rm.run();
     }
     @Override
