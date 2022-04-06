@@ -23,9 +23,12 @@ import java.awt.*;
 import java.awt.event.*;
 import java.text.NumberFormat;  
 public class GUI{
-    
-    private JFrame frame;
-    public static RealMachine rm = new RealMachine();
+    private static int programID = 1;
+
+
+
+    private static JFrame frame;
+    public static RealMachine rm = new RealMachine(programID);
     private JPanel panel;
     private JLabel virtualMemoryLabel;
     private JLabel userMemoryLabel;
@@ -70,13 +73,14 @@ public class GUI{
     private static JFormattedTextField zfField;
     private static JFormattedTextField ofField;
     // TextArea for our output
-    private JTextArea tArea;
+    private static JTextArea tArea;
 
     
+
     public GUI()
     {
         frame = new JFrame();
-        frame.setSize(600, 800);
+        frame.setSize(1000, 800);
         panel = new JPanel();
         panel.setBorder(BorderFactory.createEmptyBorder(10,10,10,10)); // Pixels top/bottom/left/right
         panel.setLayout( new BorderLayout() );
@@ -88,7 +92,7 @@ public class GUI{
         Dimension size = virtualMemoryLabel.getPreferredSize();
         Dimension size1 = userMemoryLabel.getPreferredSize();
         virtualMemoryLabel.setBounds(15, 610, size.width, size.height);
-        userMemoryLabel.setBounds(15, 290, size1.width, size1.height);
+        userMemoryLabel.setBounds(15, 310, size1.width, size1.height);
         // Pridedam juos
         panel.add(virtualMemoryLabel);
         panel.add(userMemoryLabel);
@@ -96,85 +100,86 @@ public class GUI{
         // Registru textFieldai
         ptrField = new JFormattedTextField("");
         ptrField.setBounds(45,630,50,20);
-        ptrField.setValue(new RealMachine().PTR);
+        ptrField.setValue(RealMachine.PTR);
         ptrField.setEditable(false);
         panel.add(ptrField);
 
         r0Field = new JFormattedTextField("");
         r0Field.setBounds(45,650,50,20);
-        r0Field.setValue(new RealMachine().R0);
+        r0Field.setValue(RealMachine.R0);
         r0Field.setEditable(false);
         panel.add(r0Field);
 
         r1Field = new JFormattedTextField("");
         r1Field.setBounds(45,670,50,20);
-        r1Field.setValue(new RealMachine().R1);
+        r1Field.setValue(RealMachine.R1);
         r1Field.setEditable(false);
         panel.add(r1Field);
 
         tiField = new JFormattedTextField("");
         tiField.setBounds(135,630,50,20);
-        tiField.setValue(new RealMachine().TI);
+        tiField.setValue(RealMachine.TI);
         tiField.setEditable(false);
         panel.add(tiField);
 
         modeField = new JFormattedTextField("");
         modeField.setBounds(135,650,50,20);
-        modeField.setValue(new RealMachine().mode);
+        modeField.setValue(RealMachine.mode);
         modeField.setEditable(false);
         panel.add(modeField);
 
         sfField = new JFormattedTextField("");
         sfField.setBounds(290,630,30,20);
-        sfField.setValue(new RealMachine().sf);
+        sfField.setValue(RealMachine.sf);
         sfField.setEditable(false);
         panel.add(sfField);
 
         cfField = new JFormattedTextField("");
         cfField.setBounds(290,650,30,20);
-        cfField.setValue(new RealMachine().sf);
+        cfField.setValue(RealMachine.sf);
         cfField.setEditable(false);
         panel.add(cfField);
 
         zfField = new JFormattedTextField("");
         zfField.setBounds(290,670,30,20);
-        zfField.setValue(new RealMachine().sf);
+        zfField.setValue(RealMachine.sf);
         zfField.setEditable(false);
         panel.add(zfField);
 
         ofField = new JFormattedTextField("");
         ofField.setBounds(290,690,30,20);
-        ofField.setValue(new RealMachine().sf);
+        ofField.setValue(RealMachine.sf);
         ofField.setEditable(false);
         panel.add(ofField);
 
         pcField = new JFormattedTextField("");
         pcField.setBounds(220,630,40,20);
-        pcField.setValue(new RealMachine().PC);
+        pcField.setValue(RealMachine.PC);
         pcField.setEditable(false);
         panel.add(pcField);
 
         siField = new JFormattedTextField("");
         siField.setBounds(220,650,40,20);
-        siField.setValue(new RealMachine().SI);
+        siField.setValue(RealMachine.SI);
         siField.setEditable(false);
         panel.add(siField);
 
         piField = new JFormattedTextField("");
         piField.setBounds(135,670,50,20);
-        piField.setValue(new RealMachine().PI);
+        piField.setValue(RealMachine.PI);
         piField.setEditable(false);
         panel.add(piField);
         // TextArea musu outputui
         tArea = new JTextArea(10, 10);
         panel.add(tArea);
-        tArea.append("Musu outputas keliaus \n cia su tArea.append \n funkcija");
+        tArea.append("");
         tArea.setBounds(330,615,130,130);
         // Mygtukas kazkam
         stepButton = new JButton( new AbstractAction("Step") {
             @Override
             public void actionPerformed( ActionEvent e ) {
-                JOptionPane.showMessageDialog(frame, "Step mygtukas veikia");
+                startWithSteps();
+                //JOptionPane.showMessageDialog(frame, "Step mygtukas veikia");
             }
         });
         stepButton.setBounds(150, 720, 90, 20);
@@ -183,7 +188,12 @@ public class GUI{
         submitButton = new JButton( new AbstractAction("Start") { 
             @Override
             public void actionPerformed( ActionEvent e ) {
-                start();
+                try {
+                    start();
+                } catch (InterruptedException e1) {
+                    // TODO Auto-generated catch block
+                    e1.printStackTrace();
+                }
                 //JOptionPane.showMessageDialog(frame, "Kolkas nesugalvojom ka mygtukas daro, bet veikia uzkrovimo mygtukas!");
             }
         });
@@ -238,7 +248,7 @@ public class GUI{
         panel.add(pi);
         pi.setBounds(100,670,size.width, size.height);
 
-        testLabel = new JLabel("T");
+        testLabel = new JLabel("");
         panel.add(testLabel);
         testLabel.setBounds(155,670,size.width, size.height);
         
@@ -251,11 +261,12 @@ public class GUI{
         frame.setVisible(true);
     }
 
-    public void start(){
-        rm.run();
+    public void start() throws InterruptedException{
+        
+        rm.start();
     }
     public void startWithSteps(){
-
+        rm.runWithSteps();
     }
 
     public static void updateRegisters(int ptr,int r0, int r1, byte pc, byte si, byte pi,byte ti,byte mode){
@@ -282,10 +293,16 @@ public class GUI{
         userMemory.update(rm);
     }
 
+    public static void updateOutputStream(String text){
+        tArea.append(text);
+    }
+
+    public static int inputDialog(){
+        String s = (String)JOptionPane.showInputDialog(frame, "Input");
+        return Integer.parseInt(s);
+    }
 
     public static void main(String[] args) {
-        // Starting class.
-        
         new GUI();
         System.out.println("Sukuriam Realia masina");
     }

@@ -1,5 +1,8 @@
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.security.sasl.RealmCallback;
+
 import Memory.HDD;
 import Memory.RealMemory;
 import Memory.VirtualMemory;
@@ -12,9 +15,14 @@ public class VirtualMachine {
     private VirtualMemory virtualMemory;
 
     private int PTR;
+    private int id;
 
+    VirtualMachine(){
+
+    }
     // Registrai esantys VM yra susynchronized su RM registrais
-    VirtualMachine(int PTR){
+    VirtualMachine(int PTR,int id){
+        this.id = id;
         this.virtualMemory = new VirtualMemory();
         this.PTR = PTR;
         UploadToMemory();
@@ -28,6 +36,7 @@ public class VirtualMachine {
     private void processProgram(){
 
         Word command = virtualMemory.getWord(RealMachine.PC);
+        System.out.println(RealMachine.PC +") "+command.getValue());
         RealMachine.PC++;
         processCommand(command.getValue());
 
@@ -49,28 +58,46 @@ public class VirtualMachine {
         }
         //----------------Darbas su vm atmintim-----------------//
         else if(command.substring(0,2).equals("WD")){
-            int x1 = Integer.parseInt(command.substring(2, 3));
-            int x2 = Integer.parseInt(command.substring(3, 4));
-            System.out.println(RealMachine.PC+")WD: Saving value to address  " +x1*16 + ":" +x2);
-            virtualMemory.setWord(Integer.toString(RealMachine.R0), x1, x2);
-            virtualMemory.display();
+            int x1 = Integer.parseInt(command.substring(2, 3),16);
+            int x2 = Integer.parseInt(command.substring(3, 4),16);
+            //System.out.println(RealMachine.PC+")WD: Saving value to address  " +x1*16 + ":" +x2);
+            if(x1<2&&x2<16){
+                virtualMemory.setWord(Integer.toString(RealMachine.R0), x1, x2);
+            }else{
+                RealMachine.PI = 1;
+            }
         }
 
         // TODO: L0xx, R0 registrui, L1xx - R1 registrui. Load register1
-        else if(command.substring(0,2).equals("LD")){
+        else if(command.substring(0,2).equals("L0")){
             int x1 = Integer.parseInt(command.substring(2, 3),16);
             int x2 = Integer.parseInt(command.substring(3, 4),16);
-            System.out.println(RealMachine.PC+")LD: Loading value from address  " +x1 + ":" +x2);
+            //System.out.println(RealMachine.PC+")LD: Loading value from address  " +x1 + ":" +x2);
+            if(x1<2&&x2<16){
+                char[] word = new char[4];
+                word = virtualMemory.getWord(x1, x2).getCharValue();
+                RealMachine.R0 = Integer.parseInt(new String(word));
+            }else{
+                RealMachine.PI = 1;
+            }
+        }
+        else if(command.substring(0,2).equals("L1")){
+            int x1 = Integer.parseInt(command.substring(2, 3),16);
+            int x2 = Integer.parseInt(command.substring(3, 4),16);
+            //System.out.println(RealMachine.PC+")LD: Loading value from address  " +x1 + ":" +x2);
 
-            char[] word = new char[4];
+            if(x1<2&&x2<16){
+                char[] word = new char[4];
+                word = virtualMemory.getWord(x1, x2).getCharValue();
 
-            word = virtualMemory.getWord(x1, x2).getCharValue();
-
-            RealMachine.R0 = Integer.parseInt(new String(word));
+                RealMachine.R1 = Integer.parseInt(new String(word));
+            }else{
+                RealMachine.PI = 1;
+            }
         }
         // Sukeicia vietomis R0 ir R1
         else if(command.substring(0,4).equals("MOVE")){
-            System.out.println(RealMachine.PC+")MOVING R0<->R1");
+            //System.out.println(RealMachine.PC+")MOVING R0<->R1");
             int temp = RealMachine.R1;
             RealMachine.R1 = RealMachine.R0;
             RealMachine.R0 = temp;
@@ -83,7 +110,7 @@ public class VirtualMachine {
         else if(command.substring(0,2).equals("JM")){
             int x1 = Integer.parseInt(command.substring(2, 3));
             int x2 = Integer.parseInt(command.substring(3, 4));
-            System.out.println(RealMachine.PC+")JM: Jumping to address:  " +x1*16 + ":" +x2);
+            //System.out.println(RealMachine.PC+")JM: Jumping to address:  " +x1*16 + ":" +x2);
             RealMachine.PC = (byte) (16*x1+x2);
         }
         else if(command.substring(0,2).equals("JB")){
@@ -91,7 +118,7 @@ public class VirtualMachine {
             int x2 = Integer.parseInt(command.substring(3, 4));
             if(RealMachine.sf[0]==1){
                 RealMachine.PC = (byte) (16*x1+x2);
-                System.out.println(RealMachine.PC+")JB: Jumping to address:  " +x1*16 + ":" +x2);
+                //System.out.println(RealMachine.PC+")JB: Jumping to address:  " +x1*16 + ":" +x2);
             }
         }
         else if(command.substring(0,2).equals("JA")){
@@ -99,7 +126,7 @@ public class VirtualMachine {
             int x2 = Integer.parseInt(command.substring(3, 4));
             if(RealMachine.sf[0]==1 && RealMachine.sf[1]==0){
                 RealMachine.PC = (byte) (16*x1+x2);
-                System.out.println(RealMachine.PC+")JA: Jumping to address:  " +x1*16 + ":" +x2);
+                //System.out.println(RealMachine.PC+")JA: Jumping to address:  " +x1*16 + ":" +x2);
             }
         }
         else if(command.substring(0,2).equals("JE")){
@@ -107,7 +134,7 @@ public class VirtualMachine {
             int x2 = Integer.parseInt(command.substring(3, 4));
             if( RealMachine.sf[1]==1){
                 RealMachine.PC = (byte) (16*x1+x2);
-                System.out.println(RealMachine.PC+")JE: Jumping to address:  " +x1*16 + ":" +x2);
+                //System.out.println(RealMachine.PC+")JE: Jumping to address:  " +x1*16 + ":" +x2);
             }
         }
         else if(command.substring(0,2).equals("JN")){
@@ -115,16 +142,13 @@ public class VirtualMachine {
             int x2 = Integer.parseInt(command.substring(3, 4));
             if( RealMachine.sf[1]==0){
                 RealMachine.PC = (byte) (16*x1+x2);
-                System.out.println(RealMachine.PC+")JN: Jumping to address:  " +x1*16 + ":" +x2);
+                //System.out.println(RealMachine.PC+")JN: Jumping to address:  " +x1*16 + ":" +x2);
             }
         }
 
         //-------------------Ivedimo/Isvedimo------------------//
         else if(command.substring(0,4).equals("PDR0")){
             RealMachine.SI = (byte)1;
-        }
-        else if(command.substring(0,4).equals("PDRS")){
-            // ADD();
         }
         // TODO: Reiktu daryt per interupta, bet dabar paprastai is atminties bus:) Pasidaryt maybe static RM addresa.
         else if(command.substring(0,2).equals("PR")){
@@ -133,7 +157,7 @@ public class VirtualMachine {
             int wordNumber = Integer.parseInt(command.substring(3, 4),16);
             String text = virtualMemory.getWord(blockNumber, wordNumber).getValue();
             while(text.charAt(text.length()-1)!='#'){
-                System.out.print(text);
+                GUI.updateOutputStream(text);
                 wordNumber++;
                 text = virtualMemory.getWord(blockNumber, wordNumber).getValue();
                 if(wordNumber==15){
@@ -141,10 +165,15 @@ public class VirtualMachine {
                     blockNumber++;
                 }
             }
-            System.out.println();
+            GUI.updateOutputStream("\n");
         }
         else if(command.substring(0,2).equals("RE")){
-            RealMachine.SI = (byte)9;
+            //RealMachine.SI = (byte)9;
+            int value = GUI.inputDialog();
+            int x1 = Integer.parseInt(command.substring(2, 3),16);
+            int x2 = Integer.parseInt(command.substring(3, 4),16);
+
+            virtualMemory.setWord(Integer.toString(value), x1, x2);
         }
         //-------------------Darbas su failais------------------//
         // TODO: Darbas su failais.
@@ -165,8 +194,13 @@ public class VirtualMachine {
             RealMachine.SI = 8;
         }
         else{
-            return;
+            RealMachine.PI = 2;
         }
+
+        if(RealMachine.sf[3]==1){
+            RealMachine.PI = 3;
+        }
+
         // Handle interupt
         if(test()){
             RealMachine.Interrupt();
@@ -177,7 +211,7 @@ public class VirtualMachine {
 
     // R0+R1, Atsakymas idedamas i R0
     private void ADD(){
-        System.out.println(RealMachine.PC+")R0+R1");
+        //System.out.println(RealMachine.PC+")R0+R1");
         if(RealMachine.R0 + RealMachine.R1 > Integer.MAX_VALUE){
             // Overflow flag.
             RealMachine.sf[3] = 1;
@@ -188,7 +222,7 @@ public class VirtualMachine {
     }
     // R0-R1, Atsakymas i R0.
     private void SUB(){
-        System.out.println(RealMachine.PC+")R0-R1");
+        //System.out.println(RealMachine.PC+")R0-R1");
         if(RealMachine.R0 - RealMachine.R1 < Integer.MIN_VALUE){
             // Overflow flag.
             RealMachine.sf[3] = 1;
@@ -199,7 +233,7 @@ public class VirtualMachine {
     }
     // R0*R1, Atsakymas i R0
     private void MUL(){
-        System.out.println(RealMachine.PC+")R0*R1");
+        //System.out.println(RealMachine.PC+")R0*R1");
         if(RealMachine.R0 * RealMachine.R1 > Integer.MIN_VALUE){
             // Overflow flag.
             RealMachine.sf[3] = 1;
@@ -210,10 +244,15 @@ public class VirtualMachine {
     }
     // R0/R1, Atsakymas i R0, Liekana i R1.
     private void DIV(){
-        System.out.println(RealMachine.PC+")R0/R1");
-        int liekana = RealMachine.R0 % RealMachine.R1;
-        RealMachine.R0 /= RealMachine.R1;
-        RealMachine.R1 = liekana;
+        //System.out.println(RealMachine.PC+")R0/R1");
+        if(RealMachine.R1 != 0){
+            int liekana = RealMachine.R0 % RealMachine.R1;
+            RealMachine.R0 /= RealMachine.R1;
+            RealMachine.R1 = liekana;
+        }
+        else{
+            RealMachine.PI = 4;
+        }
 
     }
 
@@ -255,8 +294,7 @@ public class VirtualMachine {
     // Is HDD ikelimas i VM atminti, bet LAIKINAS.
     private void UploadToMemory(){
         // TODO: Padaryt ne fixed size nuskaityma!!
-        String code = HDD.read(300, 0, 1);
-        System.out.println(code);
+        String code = HDD.read(1000, 0, id);
         // Split commands:
         String[] snipets = code.split("\\r?\\n"); 
         // Iteruojam  per komandas.
@@ -267,7 +305,6 @@ public class VirtualMachine {
             }
             else if(snipet.equals("HALT")){
                 virtualMemory.WriteCodeSegement(new Word(snipet));
-                virtualMemory.display();
                 return;
             }
             else if(snipet.equals("DATA") && writeStatus.equals("START")){

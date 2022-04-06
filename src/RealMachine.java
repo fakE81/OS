@@ -5,7 +5,7 @@ import java.io.IOException;
 import Memory.HDD;
 import Memory.RealMemory;
 
-public class RealMachine {
+public class RealMachine extends Thread{
     
     // Registrai:
     public static int PTR;
@@ -26,7 +26,11 @@ public class RealMachine {
     private RealMemory memory;
 
     private static boolean run = true;
-    RealMachine(){
+    private boolean firstLoad = true;
+    private int programID;
+    private VirtualMachine vm;
+    RealMachine(int id){
+        programID = id;
         PTR = 0;
         R0 = 0;
         R1 = 0;
@@ -41,26 +45,49 @@ public class RealMachine {
         this.paging = new Paging();
     }
 
-
+    @Override
     public void run(){
         try {
             // Viskas vyksta cia.
             LoadProgram("Test1.txt"); // Uzsikraunam programa i HDD.
             PTR = paging.getFreeBlock(memory);
             paging.createPageTable(PTR, memory);
-            VirtualMachine vm = new VirtualMachine(PTR); // Fill memory padarom.
+            vm = new VirtualMachine(PTR,programID); // Fill memory padarom.
             vm.syncMemory(memory);
             // Pagrindinis ciklas:
             while(run){
                 vm.run();
+                vm.syncMemory(memory);
+                //Thread.sleep(1000);
                 GUI.updateRegisters(PTR, R0, R1, PC, SI, PI, TI, mode);
                 GUI.updateStatusFlags(sf);
                 GUI.updateRealMemory(memory);
             }
-            memory.display();
+            //memory.display();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void runWithSteps(){
+        if(firstLoad){
+            try {
+                LoadProgram("Test1.txt");
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } // Uzsikraunam programa i HDD.
+            PTR = paging.getFreeBlock(memory);
+            paging.createPageTable(PTR, memory);
+            vm = new VirtualMachine(PTR,programID); // Fill memory padarom.
+            vm.syncMemory(memory);
+            firstLoad = false;
+        }
+        vm.run();
+        vm.syncMemory(memory);
+        GUI.updateRegisters(PTR, R0, R1, PC, SI, PI, TI, mode);
+        GUI.updateStatusFlags(sf);
+        GUI.updateRealMemory(memory);
     }
 
     // Uzsikraunam programa i HDD
@@ -79,7 +106,7 @@ public class RealMachine {
 
     public static void Interrupt(){
         if(SI == 1){
-            System.out.println(PC+")Output stream: " + String.valueOf(R0));
+            GUI.updateOutputStream(String.valueOf(R0)+"\n");
         }
         else if(SI == 2){
 
@@ -89,17 +116,24 @@ public class RealMachine {
             System.out.println("HALT!");
         }
 
-        if(PI == 0){
-            // Neteisingas adresas.
+        if(PI == 1){
+            System.out.println("Neteisingas adresas!");
         }
         else if(PI == 2){
-            // Neteisingas operacijos kodas.
+            System.out.println("Neteisingas operacijos kodas!");
+        }
+        else if(PI == 3){
+            System.out.println("Perpildymas!");
+        }
+        else if(PI == 4){
+            System.out.println("Dalyba iš 0");
         }
 
         if(TI == 0){
             TI = 100;
         }
         SI = 0;
+        PI = 0;
     }
 
 

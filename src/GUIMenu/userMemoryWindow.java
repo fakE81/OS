@@ -30,7 +30,8 @@ public class userMemoryWindow {
         }
 
         table = new JTable(virtualBoxes, virtualColumns);
-        
+        table.setPreferredScrollableViewportSize(table.getPreferredSize());
+        table.setFillsViewportHeight(true);
         scPaneTable = new JScrollPane(table);
     }
 

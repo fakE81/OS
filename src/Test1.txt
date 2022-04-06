@@ -1,14 +1,29 @@
+$IVE
+DATA
+Iveskite 1 skaiciu:#
+Iveskite 2 skaiciu:#
+Ats:#
+CODE
+PR00
+RE10
+PR06
+RE11
+L010
+L111
+ADD
+PR0C
+PDR0
+HALT
 $BEG
 DATA
-Iveskite 1 skaiciuuuuuuus12345611#
-Iveskite 2 skaiciu:blablalbla#
-1
-5
+1#
 CODE
-PDR0
 PR00
-PR0A
-MOVE
+JM00
+HALT
+$FAI
+DATA
+CODE
 HALT
 
 
