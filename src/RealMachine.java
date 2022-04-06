@@ -20,9 +20,12 @@ public class RealMachine {
 
     public static byte[] sf = {0,0,0,0}; // 0-CF,1-ZF,2-SF,3-OF 
 
+
+    private Paging paging;
     private HDD hdd;
     private RealMemory memory;
 
+    private static boolean run = true;
     RealMachine(){
         PTR = 0;
         R0 = 0;
@@ -30,11 +33,12 @@ public class RealMachine {
         PC = 0;
         SI = 0;
         PI = 0;
-        TI = 0;
+        TI = 100;
         mode = 0;
 
         this.hdd = new HDD();
         this.memory = new RealMemory();
+        this.paging = new Paging();
     }
 
 
@@ -42,12 +46,15 @@ public class RealMachine {
         try {
             // Viskas vyksta cia.
             LoadProgram("Test1.txt"); // Uzsikraunam programa i HDD.
-            VirtualMachine vm = new VirtualMachine(); // Virtuali masina uzkraunama
-            //TODO: Puslapiavimas.
-            vm.run();
-            
-            System.out.println("Realios masinos atmintis:");
-            //memory.display();
+            PTR = paging.getFreeBlock(memory);
+            paging.createPageTable(PTR, memory);
+            VirtualMachine vm = new VirtualMachine(PTR); // Fill memory padarom.
+            vm.syncMemory(memory);
+            // Pagrindinis ciklas:
+            while(run){
+                vm.run();
+            }
+            memory.display();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -74,8 +81,9 @@ public class RealMachine {
         else if(SI == 2){
 
         }
-        else if(SI == 9){
-            // Read input.
+        else if(SI == 8){
+            run = false;
+            System.out.println("HALT!");
         }
 
         if(PI == 0){
@@ -85,6 +93,9 @@ public class RealMachine {
             // Neteisingas operacijos kodas.
         }
 
+        if(TI == 0){
+            TI = 100;
+        }
         SI = 0;
     }
 

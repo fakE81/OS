@@ -1,61 +1,36 @@
 import java.util.ArrayList;
 import java.util.List;
 import Memory.HDD;
+import Memory.RealMemory;
 import Memory.VirtualMemory;
 import Memory.Word;
 
 public class VirtualMachine {
-    
-
-
     //https://github.com/IgnasJ/OS
     //https://github.com/dovius/OS
-    
-
-    // 1) Registrai??
-    // 2) Memory paduodamas
-    // 3) Komandu procesinimas.
-    // 3.1) Komandu atpazinimas
-    // 3.2) Komandu metodai.
-    // Registrai statiniai.
-
-
     private String writeStatus = "START";
     private VirtualMemory virtualMemory;
 
+    private int PTR;
+
     // Registrai esantys VM yra susynchronized su RM registrais
-    VirtualMachine(){
+    VirtualMachine(int PTR){
         this.virtualMemory = new VirtualMemory();
-    }
-
-
-
-    public void run(){
-        //processCommand();
+        this.PTR = PTR;
         UploadToMemory();
+    }
+    public void run(){
         processProgram();
     }
 
     // Komandu tvarkymo metodas.
     private void processProgram(){
 
-        // Code segmento pradzia. 2 Blokas.
-        while(true){
-                Word command = virtualMemory.getWord(RealMachine.PC);
-                RealMachine.PC++;
-                // Tikrinimas:
-                if(command.getValue().equals("HALT")){
-                    RealMachine.HALT();
-                    return;
-                }
-                processCommand(command.getValue());
-        }
-                // Gaunam komanda.
+        Word command = virtualMemory.getWord(RealMachine.PC);
+        RealMachine.PC++;
+        processCommand(command.getValue());
 
     }
-        
-    
-
     private void processCommand(String command){
 
         //----------------Aritmetines-----------------//
@@ -73,7 +48,6 @@ public class VirtualMachine {
         }
         //----------------Darbas su vm atmintim-----------------//
         else if(command.substring(0,2).equals("WD")){
-            // TODO: Add zeros to make 4 chars.
             int x1 = Integer.parseInt(command.substring(2, 3));
             int x2 = Integer.parseInt(command.substring(3, 4));
             System.out.println(RealMachine.PC+")WD: Saving value to address  " +x1*16 + ":" +x2);
@@ -94,8 +68,6 @@ public class VirtualMachine {
             RealMachine.R0 = Integer.parseInt(new String(word));
         }
         // Sukeicia vietomis R0 ir R1
-        // TODO: Padaryt gal kad MOVE 0004 leistu?
-        // TODO: Bet tada reik keist programos uzsikrovima.
         else if(command.substring(0,4).equals("MOVE")){
             System.out.println(RealMachine.PC+")MOVING R0<->R1");
             int temp = RealMachine.R1;
@@ -153,7 +125,7 @@ public class VirtualMachine {
         else if(command.substring(0,4).equals("PDRS")){
             // ADD();
         }
-        // TODO: Reiktu daryt per interupta, bet dabar paprastai is atminties bus:)
+        // TODO: Reiktu daryt per interupta, bet dabar paprastai is atminties bus:) Pasidaryt maybe static RM addresa.
         else if(command.substring(0,2).equals("PR")){
             //RealMachine.SI = (byte)2;
             int blockNumber = Integer.parseInt(command.substring(2, 3),16);
@@ -186,13 +158,19 @@ public class VirtualMachine {
         }
         else if(command.substring(0,3).equals("DEL")){
             // ADD();
-        }else{
+        }
+        //-----------HALT-------------//
+        else if(command.substring(0,4).equals("HALT")){
+            RealMachine.SI = 8;
+        }
+        else{
             return;
         }
         // Handle interupt
         if(test()){
             RealMachine.Interrupt();
         }
+        RealMachine.TI--;
     }
 
 
@@ -258,7 +236,19 @@ public class VirtualMachine {
 
     private boolean test(){
         // TODO: TI pridet veliau
-        return (RealMachine.PI + RealMachine.SI > 0);
+        return (RealMachine.PI + RealMachine.SI > 0) || RealMachine.TI == 0;
+    }
+
+
+    public void syncMemory(RealMemory rm){
+        int syncBlocks = 0;
+        for(int i =0; syncBlocks < VirtualMemory.BLOCK_COUNT;i++){
+            int blockId = Integer.valueOf(rm.getWord(PTR, i).getValue());
+            for(int j = 0; j < virtualMemory.BLOCK_COUNT; j++){
+                rm.setWord(virtualMemory.getWord(i, j).getValue(), blockId, j);
+            }
+            syncBlocks++;
+        }
     }
 
     // Is HDD ikelimas i VM atminti, bet LAIKINAS.
@@ -290,7 +280,6 @@ public class VirtualMachine {
 
             // Kvieciam rasyma.
             if(writeStatus.equals("DATA")){
-                // TODO: Kitaip sugalvot. Dabar tik bendram atvejui.
                 List<String> tempSnipets= new ArrayList<String>();
                 int index = 0;
                 while (index<snipet.length()) {

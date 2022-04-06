@@ -1,6 +1,5 @@
 package Memory;
 
-// Zodis, tik nezinau ar 4B geriau ar 8B
 public class Word {
     private String data;
 

@@ -6,7 +6,9 @@ public class Main {
     // 2) Realios masinos registrus Static. Turi Memory
     // 3) VirtualMachine. Gauna Memory ir bando atpazinti komandas.
 
-    
+    // TODO: Interruptus visus sudet, PI ir SI.
+    // TODO: Trys programos: 1)Iveskite pirmaSK, Iveskite antraSK, 2)Loopas, 1 isveda vis, 3)Su failais darbas.
+    // TODO: GUI integracija i programa.
     public static void main(String[] args) {
         // Starting class.
         System.out.println("Sukuriam Realia masina");
