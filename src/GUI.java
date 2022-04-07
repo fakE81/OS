@@ -21,9 +21,8 @@ import GUIMenu.virtualMachineWindow;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.text.NumberFormat;  
 public class GUI{
-    private static int programID = 1;
+    private static int programID = 2;
 
 
 
@@ -170,10 +169,12 @@ public class GUI{
         piField.setEditable(false);
         panel.add(piField);
         // TextArea musu outputui
-        tArea = new JTextArea(10, 10);
+        tArea = new JTextArea(100, 10);
         panel.add(tArea);
         tArea.append("");
         tArea.setBounds(330,615,130,130);
+        tArea.setLineWrap(true);
+        tArea.setWrapStyleWord(true);
         // Mygtukas kazkam
         stepButton = new JButton( new AbstractAction("Step") {
             @Override

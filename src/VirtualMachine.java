@@ -1,21 +1,25 @@
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.security.sasl.RealmCallback;
-
 import Memory.HDD;
 import Memory.RealMemory;
 import Memory.VirtualMemory;
 import Memory.Word;
 
 public class VirtualMachine {
-    //https://github.com/IgnasJ/OS
-    //https://github.com/dovius/OS
     private String writeStatus = "START";
     private VirtualMemory virtualMemory;
 
     private int PTR;
     private int id;
+
+    File file;
 
     VirtualMachine(){
 
@@ -28,20 +32,30 @@ public class VirtualMachine {
         UploadToMemory();
     }
     public void run(){
-        processProgram();
+        try {
+            processProgram();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         GUI.updateVirtualMemory(virtualMemory);
     }
 
     // Komandu tvarkymo metodas.
-    private void processProgram(){
+    private void processProgram() throws IOException{
 
         Word command = virtualMemory.getWord(RealMachine.PC);
         System.out.println(RealMachine.PC +") "+command.getValue());
         RealMachine.PC++;
-        processCommand(command.getValue());
+        try {
+            processCommand(command.getValue());
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 
     }
-    private void processCommand(String command){
+    private void processCommand(String command) throws IOException{
 
         //----------------Aritmetines-----------------//
         if(command.substring(0,3).equals("ADD")){
@@ -150,7 +164,6 @@ public class VirtualMachine {
         else if(command.substring(0,4).equals("PDR0")){
             RealMachine.SI = (byte)1;
         }
-        // TODO: Reiktu daryt per interupta, bet dabar paprastai is atminties bus:) Pasidaryt maybe static RM addresa.
         else if(command.substring(0,2).equals("PR")){
             //RealMachine.SI = (byte)2;
             int blockNumber = Integer.parseInt(command.substring(2, 3),16);
@@ -165,7 +178,7 @@ public class VirtualMachine {
                     blockNumber++;
                 }
             }
-            GUI.updateOutputStream("\n");
+            //GUI.updateOutputStream("\n");
         }
         else if(command.substring(0,2).equals("RE")){
             //RealMachine.SI = (byte)9;
@@ -177,17 +190,77 @@ public class VirtualMachine {
         }
         //-------------------Darbas su failais------------------//
         // TODO: Darbas su failais.
-        else if(command.substring(0,4).equals("OPEN")){
-            // ADD();
+        else if(command.substring(0,2).equals("OP")){
+            int x1 = Integer.parseInt(command.substring(2, 3),16);
+            int x2 = Integer.parseInt(command.substring(3, 4),16);
+
+            String filename = virtualMemory.getWord(x1, x2).getValue();
+            file = new File(filename);
         }
+        // R0 - Kiek skaityti baitu. RDxy, xy - adresas kur patalpinti duomenis.
+        else if(command.substring(0,2).equals("RD")){
+            int countChar = RealMachine.R0;
+            FileInputStream fis = new FileInputStream(file);
+            int scanned = 0;
+            char c;
+            String text="";
+            try {
+                while((c=(char) fis.read())!=-1){
+                    text += c;
+                    scanned++;
+                    if(scanned == countChar)
+                        break;
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            text+="#";
+            List<String> tempSnipets= new ArrayList<String>();
+            int index = 0;
+            while (index<text.length()) {
+                tempSnipets.add(text.substring(index, Math.min(index+4,text.length())));
+                index=index+4;
+             }
+             for(String temp : tempSnipets){
+                if(temp.length() != 1 && temp.charAt(temp.length()-1)=='#'){
+                    virtualMemory.WriteDataSegment(new Word(temp.substring(0, temp.length()-1)));
+                    virtualMemory.WriteDataSegment(new Word("#"));
+                }
+                else{
+                    virtualMemory.WriteDataSegment(new Word(temp));
+                }
+            }
+
+        }
+        // Seek pointer - R0
         else if(command.substring(0,2).equals("WR")){
-            // ADD();
+            int x1 = Integer.parseInt(command.substring(2, 3),16);
+            int x2 = Integer.parseInt(command.substring(3, 4),16);
+
+            RandomAccessFile raf = new RandomAccessFile(file, "rw");
+            int pointer = RealMachine.R0;
+            raf.seek(pointer);
+
+            String text = virtualMemory.getWord(x1, x2).getValue();
+            while(text.charAt(text.length()-1)!='#'){
+                x2++;
+                text += virtualMemory.getWord(x1, x2).getValue();
+                if(x2==15){
+                    x2 = 0;
+                    x1++;
+                }
+            }
+            text = text.substring(0, text.length()-1);
+
+            byte[] s = text.getBytes("UTF-8");
+
+            System.out.println(text);
+            raf.write(s);
+            raf.close();
         }
         else if(command.substring(0,4).equals("CLOS")){
-            // ADD();
-        }
-        else if(command.substring(0,3).equals("DEL")){
-            // ADD();
+            file = null;
         }
         //-----------HALT-------------//
         else if(command.substring(0,4).equals("HALT")){

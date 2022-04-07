@@ -105,13 +105,11 @@ public class RealMachine extends Thread{
     }
 
     public static void Interrupt(){
+        // TODO: Rasymo ir failu interuptai?
         if(SI == 1){
             GUI.updateOutputStream(String.valueOf(R0)+"\n");
         }
         else if(SI == 2){
-
-        }
-        else if(SI == 8){
             run = false;
             System.out.println("HALT!");
         }
