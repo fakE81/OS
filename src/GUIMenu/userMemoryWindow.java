@@ -41,5 +41,6 @@ public class userMemoryWindow {
                 virtualBoxes[i][j]= vm.getWord(i, j).getValue();
             }
         }
+        table.repaint();
     }
 }

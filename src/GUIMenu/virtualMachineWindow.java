@@ -40,5 +40,6 @@ public class virtualMachineWindow extends JFrame {
                 virtualData[i][j]= vm.getWord(i, j).getValue();
             }
         }
+        table.repaint();
     }
 }

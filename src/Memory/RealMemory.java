@@ -8,12 +8,11 @@ public class RealMemory {
     // Word klase, kuri yra cia isreiksta. [Block_Count][Block_Size]
     // Rasyti i bloka Char[], gauti is bloko.
 
-    public static int BLOCK_COUNT = 32;
+    public static int BLOCK_COUNT = 17;
     private static int BLOCK_SIZE = 16;
     
     public ArrayList<Integer> usedBlocks = new ArrayList<Integer>();
-
-    // Nezinau kas geriau ar turet dvimati masyva su Word, ar turet atskira klase Block. Kuri tures 16 zodziu?
+    public ArrayList<Integer> freeBlocks = new ArrayList<Integer>();
     private Word[][] memory = new Word[BLOCK_COUNT][BLOCK_SIZE];
 
     public RealMemory(){
@@ -21,6 +20,7 @@ public class RealMemory {
             for (int y = 0; y < BLOCK_SIZE; ++y) {
                 memory[x][y] = new Word();
             }
+            freeBlocks.add(x);
         }
     }
 

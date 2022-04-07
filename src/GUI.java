@@ -1,5 +1,4 @@
 
-import Memory.HDD;
 import Memory.RealMemory;
 import Memory.VirtualMemory;
 
@@ -11,8 +10,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextArea;
 
 
@@ -22,7 +19,7 @@ import GUIMenu.virtualMachineWindow;
 import java.awt.*;
 import java.awt.event.*;
 public class GUI{
-    private static int programID = 2;
+    private static int programID = 1;
 
 
 
@@ -172,7 +169,7 @@ public class GUI{
         tArea = new JTextArea(100, 10);
         panel.add(tArea);
         tArea.append("");
-        tArea.setBounds(330,615,130,130);
+        tArea.setBounds(330,615,800,130);
         tArea.setLineWrap(true);
         tArea.setWrapStyleWord(true);
         // Mygtukas kazkam

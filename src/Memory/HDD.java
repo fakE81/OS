@@ -5,8 +5,8 @@ import java.io.RandomAccessFile;
 
 public class HDD {
     // Hard drive.
-    private static final int DISK_SIZE = 4096; // Kiek baitu skaitysim trubut?
-    private static final String FILL_CHARACTER = " "; // Klausimas ar reikia mum
+    private static final int DISK_SIZE = 4096; // Size of disk.
+    private static final String FILL_CHARACTER = " ";
     private static RandomAccessFile file;
 
     // Sukuriamas tuscias HDD. Size = 4096

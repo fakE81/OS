@@ -20,5 +20,4 @@ public class Word {
     public void setValue(String s){
         data = s;
     }
-    // Seteriai geteriai kai paduodamas int.
 }

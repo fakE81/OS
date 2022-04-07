@@ -1,9 +1,7 @@
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
@@ -178,7 +176,7 @@ public class VirtualMachine {
                     blockNumber++;
                 }
             }
-            //GUI.updateOutputStream("\n");
+            GUI.updateOutputStream(" ");
         }
         else if(command.substring(0,2).equals("RE")){
             //RealMachine.SI = (byte)9;
@@ -264,7 +262,7 @@ public class VirtualMachine {
         }
         //-----------HALT-------------//
         else if(command.substring(0,4).equals("HALT")){
-            RealMachine.SI = 8;
+            RealMachine.SI = 2;
         }
         else{
             RealMachine.PI = 2;
@@ -355,9 +353,9 @@ public class VirtualMachine {
 
     public void syncMemory(RealMemory rm){
         int syncBlocks = 0;
-        for(int i =0; syncBlocks < VirtualMemory.BLOCK_COUNT;i++){
+        for(int i =0; syncBlocks < VirtualMemory.BLOCK_COUNT;i++){  
             int blockId = Integer.valueOf(rm.getWord(PTR, i).getValue());
-            for(int j = 0; j < virtualMemory.BLOCK_COUNT; j++){
+            for(int j = 0; j < VirtualMemory.BLOCK_COUNT; j++){
                 rm.setWord(virtualMemory.getWord(i, j).getValue(), blockId, j);
             }
             syncBlocks++;

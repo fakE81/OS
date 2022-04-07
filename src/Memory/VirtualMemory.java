@@ -11,7 +11,7 @@ public class VirtualMemory {
     private int currentDataBlock = 0;
     private int currentDataSegement = 0;
 
-    private int currentCodeBlock = 2;
+    private int currentCodeBlock = 6;
     private int currentCodeSegement = 0;
 
     // Nusinulinam
@@ -49,7 +49,7 @@ public class VirtualMemory {
         return memory[x1][x2];
     }
     public Word getWord(byte pc){
-        return memory[pc/16+2][pc%16];
+        return memory[pc/16+6][pc%16];
     }
     public void setWord(String word,int x1, int x2){
         memory[x1][x2] = new Word(word);
