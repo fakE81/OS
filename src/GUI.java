@@ -19,9 +19,7 @@ import GUIMenu.virtualMachineWindow;
 import java.awt.*;
 import java.awt.event.*;
 public class GUI{
-    private static int programID = 1;
-
-
+    private static int programID = 2;
 
     private static JFrame frame;
     public static RealMachine rm = new RealMachine(programID);

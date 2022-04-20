@@ -18,6 +18,7 @@ public class RealMachine extends Thread{
     public static byte TI;
     public static byte mode;
 
+    // byte sf
     public static byte[] sf = {0,0,0,0}; // 0-CF,1-ZF,2-SF,3-OF 
 
 
@@ -48,17 +49,32 @@ public class RealMachine extends Thread{
     @Override
     public void run(){
         try {
+            // TODO: Kanalu iren.
+            // TODO: supervizorine.
+            // TODO: Interruptai susideti, su failais dirba kanalu irenginys
+            // TODO: PTR lentele eina i 17bloko VM atminti
             // Viskas vyksta cia.
+
+
+            /*
+            Kanalo irengini pasakom kad skaitysim is hardo ir visa informacija visi 16bloku yra kisami i supervizorine atminti
+            Iskvieciam Exchange, viskas atsiranda supervizorineje. Galima patikrinti ar nera blogu komandu.
+            Jei viskas gerai Isskiriam 16bloku VM masinai/Puslapiavimas. Uzpildom supervizorine atmintimi VM.
+            Kanalu irengini isvedimas/ivedimas. Source ir Destinaton nurodomas.
+            */
             LoadProgram("Test1.txt"); // Uzsikraunam programa i HDD.
             PTR = paging.getFreeBlock(memory);
             paging.createPageTable(PTR, memory);
             vm = new VirtualMachine(PTR,programID); // Fill memory padarom.
             vm.syncMemory(memory);
             // Pagrindinis ciklas:
+            // SI = 2 Halt.
             while(run){
                 vm.run();
                 vm.syncMemory(memory);
                 //Thread.sleep(1000);
+
+                // Patikrinti ar interupto nebuvo. Test paleist reik. ir tada Interrupt()
                 GUI.updateRegisters(PTR, R0, R1, PC, SI, PI, TI, mode);
                 GUI.updateStatusFlags(sf);
                 GUI.updateRealMemory(memory);

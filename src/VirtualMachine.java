@@ -51,7 +51,6 @@ public class VirtualMachine {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-
     }
     private void processCommand(String command) throws IOException{
 
@@ -162,6 +161,7 @@ public class VirtualMachine {
         else if(command.substring(0,4).equals("PDR0")){
             RealMachine.SI = (byte)1;
         }
+        // TODO: interuptai per registrus adresas.!
         else if(command.substring(0,2).equals("PR")){
             //RealMachine.SI = (byte)2;
             int blockNumber = Integer.parseInt(command.substring(2, 3),16);
@@ -187,7 +187,8 @@ public class VirtualMachine {
             virtualMemory.setWord(Integer.toString(value), x1, x2);
         }
         //-------------------Darbas su failais------------------//
-        // TODO: Darbas su failais.
+        // TODO: Darbas su failais per kanalu irengini.
+        // TODO: LocalFile class, pointer i VM, interupto metu ++
         else if(command.substring(0,2).equals("OP")){
             int x1 = Integer.parseInt(command.substring(2, 3),16);
             int x2 = Integer.parseInt(command.substring(3, 4),16);
@@ -259,6 +260,7 @@ public class VirtualMachine {
         }
         else if(command.substring(0,4).equals("CLOS")){
             file = null;
+            // Handleris atsilaisvina
         }
         //-----------HALT-------------//
         else if(command.substring(0,4).equals("HALT")){
@@ -363,6 +365,7 @@ public class VirtualMachine {
     }
 
     // Is HDD ikelimas i VM atminti, bet LAIKINAS.
+    // TODO: turi buti paruosta ir paduota.
     private void UploadToMemory(){
         // TODO: Padaryt ne fixed size nuskaityma!!
         String code = HDD.read(1000, 0, id);
